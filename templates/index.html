@@ -1,50 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block container %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowbite Flask</title>
-    <link rel="stylesheet" href="{{url_for('static',filename='dist/output.css')}}">
-</head>
-
-<body>
-    
-<nav class="bg-neutral-primary border-default">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-    <a href="https://flowbite.com/" class="flex items-center space-x-3 rtl:space-x-reverse">
-        <img src="https://flowbite.com/docs/images/logo.svg" class="h-7" alt="Flowbite Logo" />
-        <span class="self-center text-xl text-heading font-semibold whitespace-nowrap">Flowbite</span>
-    </a>
-    <button data-collapse-toggle="navbar-default" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary" aria-controls="navbar-default" aria-expanded="false">
-        <span class="sr-only">Open main menu</span>
-        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/></svg>
-    </button>
-    <div class="hidden w-full md:block md:w-auto" id="navbar-default">
-      <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary">
-        <li>
-          <a href="#" class="block py-2 px-3 text-white bg-brand rounded md:bg-transparent md:text-fg-brand md:p-0" aria-current="page">Home</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">About</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Services</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Pricing</a>
-        </li>
-        <li>
-          <a href="#" class="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Contact</a>
-        </li>
-      </ul>
+<div class="mt-10 mx-auto max-w-7xl px-6">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+            <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Panel de Alumnos</h2>
+            <p class="text-sm text-gray-500 mt-1">Listado completo de estudiantes registrados en el sistema.</p>
+        </div>
+        <a href="/Alumnos" class="inline-flex items-center justify-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            Nuevo Registro
+        </a>
     </div>
-  </div>
-</nav>
 
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-blue-600 border-b border-blue-700">
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">ID</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">Información Personal</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">Contacto</th>
+                        <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-white">Estado de Alta</th>
+                        <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider text-white">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-50">
+                    {% for alumno in alumno %}
+                    <tr class="group hover:bg-blue-50/30 transition-all duration-200">
+                        <td class="px-6 py-5">
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gray-100 text-gray-600 font-mono text-xs font-bold group-hover:bg-blue-100 group-hover:text-blue-700 transition-colors">
+                                #{{ alumno.id }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold text-gray-900 group-hover:text-blue-700 transition-colors">{{ alumno.nombre }}</span>
+                                <span class="text-xs text-gray-500 italic">{{ alumno.apaterno }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 text-sm">
+                            <div class="flex items-center text-gray-600">
+                                <svg class="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                {{ alumno.email }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-5">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-medium text-gray-700">Registrado el:</span>
+                                <span class="text-xs text-gray-400 font-medium">{{ alumno.created_date.strftime('%d/%m/%Y') }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5 text-center">
+                            <a href="Alumnos1" class="inline-flex items-center px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 rounded-xl text-xs font-bold shadow-sm transition-all hover:shadow-md">
+                                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="bg-gray-50/50 px-6 py-4 border-t border-gray-100">
+            <p class="text-xs text-gray-400 font-medium italic">Total de registros: {{ alumno|length }}</p>
+        </div>
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
-</body>
-
-</html>
+{% endblock %}
