@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block container %}
+<div class="max-w-4xl mx-auto mt-10">
+    <div class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden">
+        <div class="p-8 border-b border-gray-100 bg-gray-50">
+            <div class="flex justify-between items-start">
+                <div>
+                    <span class="text-indigo-600 text-xs font-bold uppercase tracking-widest">Módulo de Cursos</span>
+                    <h1 class="text-3xl font-black text-gray-900 mt-2">{{ curso.nombre }}</h1>
+                    <p class="text-gray-500 mt-2">{{ curso.descripcion }}</p>
+                </div>
+                <div class="text-right">
+                    <span class="block text-sm text-gray-400">ID Curso</span>
+                    <span class="text-xl font-mono font-bold text-gray-900">#{{ curso.id }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-bold text-gray-800 mb-4 italic">Maestro Titular</h3>
+                <div class="flex items-center p-4 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                    <div class="h-12 w-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/></svg>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-900">{{ curso.maestro.nombre }} {{ curso.maestro.apellidos }}</p>
+                        <p class="text-sm text-gray-500">{{ curso.maestro.especialidad }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-gray-800 mb-4">Alumnos Inscritos</h3>
+                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100">
+                    <ul class="space-y-3">
+                        {% for alumno in curso.alumnos %}
+                            <li class="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                                <span class="text-sm font-medium text-gray-700">
+                                    {{ alumno.nombre }} {{ alumno.apellidos }}
+                                </span>
+                                <span class="text-xs text-gray-400">ID: {{ alumno.id }}</span>
+                            </li>
+                        {% else %}
+                            <li class="text-center py-4 text-gray-400 italic text-sm">
+                                No hay alumnos inscritos en este curso todavía.
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-gray-50 border-t border-gray-100 flex gap-4">
+            <a href="{{ url_for('cursos.registro_curso') }}" class="text-sm font-bold text-gray-600 hover:text-gray-900">
+                ← Volver a Cursos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

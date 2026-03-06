@@ -1,3 +1,3 @@
 from flask import Blueprint
-maestros = Blueprint('maestros', __name__)
+cursos = Blueprint('cursos', __name__)
 from . import routes

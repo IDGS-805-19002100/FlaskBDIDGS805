@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block container %}
+<div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-left text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                <th class="px-6 py-3">ID</th>
+                <th class="px-6 py-3">Nombre del Curso</th>
+                <th class="px-6 py-3">Maestro Asignado</th>
+                <th class="px-6 py-3">Alumnos Inscritos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for curso in cursos %}
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4">{{ curso.id }}</td>
+                <td class="px-6 py-4 font-medium text-gray-900">{{ curso.nombre }}</td>
+                <td class="px-6 py-4">{{ curso.maestro.nombre }} {{ curso.maestro.apellidos }}</td>
+                <td class="px-6 py-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                        {{ curso.alumnos|length }} alumnos
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

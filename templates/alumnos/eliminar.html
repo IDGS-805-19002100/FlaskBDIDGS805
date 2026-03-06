@@ -1,0 +1,52 @@
+{% extends "layout.html" %} 
+
+{% block container %}
+{% import "_macros.html" as macros %}
+
+<div class="flex items-center justify-center min-h-[80vh] px-4">
+    <div class="w-full max-w-lg p-8 bg-white rounded-2xl shadow-2xl border border-gray-200" style="display: block !important;">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-red-600">Eliminar Alumno</h2>
+            <p class="text-gray-500 text-sm mt-2">¿Estás seguro? Esta acción es irreversible.</p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('alumnos.eliminar', id=form.id.data) }}" class="space-y-5" style="display: block !important; position: relative; z-index: 50;">
+            {{ form.csrf_token }}
+            
+            <div class="grid grid-cols-1 gap-4 mb-6">
+                <div class="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    {{ macros.camposNuevos(form.id) }}
+                </div>
+                <div class="bg-gray-100 p-4 rounded-lg border border-gray-200">
+                    {{ macros.camposNuevos(form.nombre) }}
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; margin-bottom: 20px;">
+                <button type="submit" 
+                    style="background-color: #dc2626 !important; 
+                           color: white !important; 
+                           width: 100% !important; 
+                           padding: 15px !important; 
+                           border-radius: 12px !important; 
+                           font-weight: bold !important; 
+                           border: none !important;
+                           cursor: pointer !important;
+                           display: block !important;
+                           visibility: visible !important;
+                           opacity: 1 !important;"
+                    class="hover:bg-red-700 transition-colors">
+                    CONFIRMAR ELIMINACIÓN
+                </button>
+            </div>
+            
+            <div style="margin-top: 10px;">
+                <a href="{{ url_for('alumnos.listado_alumnos') }}" 
+                   style="display: block; text-align: center; padding: 10px; color: #6b7280; text-decoration: none; background: #f3f4f6; border-radius: 12px; font-weight: 500;">
+                    Cancelar y Volver
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

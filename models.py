@@ -8,7 +8,7 @@ class Alumnos(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(50))
-    apellidos = db.Column(db.String(200))
+    apellidos = db.Column(db.String(200)) 
     email = db.Column(db.String(120))
     telefono = db.Column(db.String(20))
     created_date = db.Column(
@@ -16,11 +16,76 @@ class Alumnos(db.Model):
         default=datetime.datetime.now
     )
     
+    # Relación muchos a muchos con Cursos
+    cursos = db.relationship(
+        'Curso',
+        secondary='inscripciones',
+        back_populates='alumnos'
+    )
+
 class Maestros(db.Model):
     __tablename__ = 'maestros'
     
-    matricula=db.Column(db.Integer,primary_key=True)
-    nombre=db.Column(db.String(50))
-    apellidos=db.Column(db.String(50))
-    especialidad=db.Column(db.String(50))
-    email=db.Column(db.String(50))    
+    matricula = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(50))
+    apellidos = db.Column(db.String(50))
+    especialidad = db.Column(db.String(50))
+    email = db.Column(db.String(50))
+    
+    # Relación uno a muchos con Cursos
+    cursos = db.relationship('Curso', back_populates='maestro')
+
+class Curso(db.Model):
+    __tablename__ = 'cursos'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(150), nullable=False)
+    descripcion = db.Column(db.Text)
+    
+    # Clave foránea que conecta con Maestros
+    maestro_id = db.Column(
+        db.Integer,
+        db.ForeignKey('maestros.matricula'),
+        nullable=False
+    )
+    
+    # Relaciones
+    maestro = db.relationship('Maestros', back_populates='cursos') 
+    alumnos = db.relationship(
+        'Alumnos',
+        secondary='inscripciones',
+        back_populates='cursos'
+    )
+
+class Inscripcion(db.Model):
+    __tablename__ = 'inscripciones'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    
+    alumno_id = db.Column(
+        db.Integer,
+        db.ForeignKey('alumnos.id'),
+        nullable=False
+    )
+    curso_id = db.Column(
+        db.Integer,
+        db.ForeignKey('cursos.id'),
+        nullable=False
+    )
+    
+    fecha_inscripcion = db.Column(
+        db.DateTime,
+        server_default=db.func.now()
+    )
+
+    # --- CORRECCIÓN AQUÍ ---
+    # Estas relaciones permiten que Jinja acceda a registro.alumno.nombre 
+    # y registro.curso.nombre desde la lista de inscripciones
+    alumno = db.relationship('Alumnos', backref='inscripciones_detalles')
+    curso = db.relationship('Curso', backref='inscripciones_detalles')
+    # -----------------------
+
+    # Restricción de unicidad para evitar que un alumno se inscriba dos veces al mismo curso
+    __table_args__ = (
+        db.UniqueConstraint('alumno_id', 'curso_id', name='uq_alumno_curso'),
+    )
