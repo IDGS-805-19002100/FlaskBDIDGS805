@@ -1,42 +1,71 @@
 {% extends "layout.html" %}
 {% block container %}
-<div class="p-6">
-    <h2 class="text-2xl font-bold mb-6 text-green-700">Bitácora Global de Inscripciones</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for registro in inscripciones %}
-        <div class="bg-white border border-gray-200 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-full">Inscripción Activa</span>
-                <span class="text-gray-400 text-xs font-medium">{{ registro.fecha_inscripcion.strftime('%d/%m/%Y %H:%M') }}</span>
-            </div>
-            
-            <div class="space-y-3">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase font-bold">Estudiante</p>
-                        <p class="text-sm font-bold text-gray-900">{{ registro.alumno.nombre }} {{ registro.alumno.apellidos }}</p>
-                    </div>
-                </div>
+<div class="p-6 max-w-5xl mx-auto">
+    <div class="mb-8">
+        <h2 class="text-3xl font-extrabold text-gray-900">Control de Inscripciones por Materia</h2>
+        <p class="text-gray-500 mt-2">Haz clic en una materia para ver la lista de alumnos inscritos.</p>
+    </div>
 
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 h-8 w-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
-                        <svg class="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"></path></svg>
+    <div id="accordion-flush" data-accordion="collapse" data-active-classes="bg-white text-blue-600" data-inactive-classes="text-gray-500">
+        
+        {% for materia in materias %}
+        <h2 id="accordion-flush-heading-{{ materia.id }}">
+            <button type="button" class="flex items-center justify-between w-full py-5 font-bold text-left border-b border-gray-200 gap-3" data-accordion-target="#accordion-flush-body-{{ materia.id }}" aria-expanded="false" aria-controls="accordion-flush-body-{{ materia.id }}">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 text-indigo-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                     </div>
-                    <div>
-                        <p class="text-xs text-gray-400 uppercase font-bold">Curso</p>
-                        <p class="text-sm font-bold text-gray-900">{{ registro.curso.nombre }}</p>
-                    </div>
+                    <span>{{ materia.nombre }} <span class="ml-2 text-xs font-medium text-gray-400">({{ materia.alumnos|length }} alumnos)</span></span>
                 </div>
+                <svg data-accordion-icon 
+     style="width: 12px; height: 12px; min-width: 12px;" 
+     class="rotate-180 shrink-0 text-gray-400" 
+     aria-hidden="true" 
+     xmlns="http://www.w3.org/2000/svg" 
+     fill="none" 
+     viewBox="0 0 10 6">
+    <path stroke="currentColor" 
+          stroke-linecap="round" 
+          stroke-linejoin="round" 
+          stroke-width="2" 
+          d="M9 5 5 1 1 5"/>
+</svg>
+            </button>
+        </h2>
+        <div id="accordion-flush-body-{{ materia.id }}" class="hidden" aria-labelledby="accordion-flush-heading-{{ materia.id }}">
+            <div class="py-5 border-b border-gray-200">
+                {% if materia.alumnos %}
+                <div class="relative overflow-x-auto shadow-sm rounded-xl">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 font-black">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">ID</th>
+                                <th scope="col" class="px-6 py-3">Nombre del Alumno</th>
+                                <th scope="col" class="px-6 py-3">Email</th>
+                                <th scope="col" class="px-6 py-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            {% for alumno in materia.alumnos %}
+                            <tr class="bg-white hover:bg-blue-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-gray-900">{{ alumno.id }}</td>
+                                <td class="px-6 py-4">{{ alumno.nombre }} {{ alumno.apellidos }}</td>
+                                <td class="px-6 py-4 text-xs">{{ alumno.email }}</td>
+                                <td class="px-6 py-4">
+                                    <span class="text-green-600 font-bold text-xs uppercase">Inscrito</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-sm text-gray-500 italic px-4">No hay alumnos inscritos en esta materia todavía.</p>
+                {% endif %}
             </div>
-        </div>
-        {% else %}
-        <div class="col-span-full text-center py-10">
-            <p class="text-gray-500 italic">No hay registros de inscripciones todavía.</p>
         </div>
         {% endfor %}
+
     </div>
 </div>
 {% endblock %}

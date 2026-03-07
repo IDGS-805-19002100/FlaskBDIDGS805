@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from . import inscripciones 
 from models import db, Alumnos, Curso, Inscripcion
 import forms
+from models import Curso 
 
 @inscripciones.route("/inscribir", methods=['GET', 'POST'])
 def inscribir_alumno():
@@ -33,8 +34,8 @@ def inscribir_alumno():
 
 
 
-@inscripciones.route("/consultar")
+# En inscripciones/routes.py
+@inscripciones.route('/consultar')
 def consultar_inscripciones():
-    inscripciones_realizadas = Inscripcion.query.all()
-    
-    return render_template("inscripciones/listado.html", inscripciones=inscripciones_realizadas)
+    materias = Curso.query.all()
+    return render_template("inscripciones/listado.html", materias=materias)
