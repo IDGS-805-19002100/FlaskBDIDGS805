@@ -26,9 +26,9 @@ def registro_alumno():
 @alumnos.route("/detalles", methods=['GET'])
 def detalles():
     id = request.args.get('id')
-    # Obtenemos el objeto completo del alumno
+    
     alum = Alumnos.query.get_or_404(id)
-    # Pasamos el objeto 'alum' a la plantilla
+    
     return render_template('alumnos/detalles.html', alumno=alum)
 
 @alumnos.route("/modificar", methods=['GET', 'POST'])

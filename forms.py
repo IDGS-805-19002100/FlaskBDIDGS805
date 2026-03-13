@@ -1,58 +1,53 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, StringField, EmailField, TextAreaField, SelectField, validators # Se agregó SelectField aquí
+from wtforms import StringField, IntegerField, RadioField, SelectMultipleField, DateField, validators, widgets
+from datetime import date
 
-# Formulario para Alumnos
-class UserForm(FlaskForm): 
-    id = IntegerField('id')
-    
+# Clase para permitir Checkboxes múltiples en los ingredientes
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    option_widget = widgets.CheckboxInput()
+
+class PizzaForm(FlaskForm):
+    # --- Datos del Cliente ---
     nombre = StringField("Nombre", [
-        validators.DataRequired(message="El campo es requerido"),
-        validators.Length(min=4, max=50, message="Ingrese nombre valido")
+        validators.DataRequired(message="El nombre es obligatorio"),
+        validators.Length(min=4, max=100)
     ])
     
-    apellidos = StringField("Apellidos", [
-        validators.DataRequired(message="El campo es requerido")
+    direccion = StringField("Dirección", [
+        validators.DataRequired(message="La dirección es obligatoria")
     ])
     
-    telefono = StringField("Telefono", [
-        validators.DataRequired(message="Ingresa telefono valido")
-    ])
-    
-    email = EmailField("Correo", [
-        validators.Email(message="Ingresa correo valido")
+    telefono = StringField("Teléfono", [
+        validators.DataRequired(message="El teléfono es obligatorio")
     ])
 
-# Formulario para Maestros
-class UserForm2(FlaskForm):
-    id = IntegerField('matricula')
-    
-    nombre = StringField("Nombre", [
-        validators.DataRequired(message="El campo es requerido"),
-        validators.Length(min=4, max=50, message="Ingrese nombre valido")
-    ])
-    
-    apellidos = StringField("Apellidos", [
-        validators.DataRequired(message="El campo es requerido")
-    ])
-    
-    especialidad = StringField("Especialidad", [
-        validators.DataRequired(message="Ingresa una especialidad válida")
-    ])
-    
-    email = EmailField("Email", [
-        validators.Email(message="Ingresa correo valido")
+    fecha = DateField("Fecha de Compra", default=date.today, validators=[
+        validators.DataRequired(message="Seleccione una fecha válida")
     ])
 
-# Formulario para Cursos (Relación Uno a Muchos con Maestros) [cite: 9]
-class CursoForm(FlaskForm):
-    nombre = StringField("Nombre del Curso", [
-        validators.DataRequired(message="El nombre de la materia es obligatorio"),
-        validators.Length(min=3, max=150) # El PDF indica máximo 150 caracteres para el curso 
+    # --- Detalles de la Pizza ---
+    tamano = RadioField('Tamaño de Pizza', choices=[
+        ('Chica', 'Chica $40'),
+        ('Mediana', 'Mediana $80'),
+        ('Grande', 'Grande $120')
+    ], validators=[validators.DataRequired(message="Seleccione un tamaño")])
+
+    ingredientes = MultiCheckboxField('Ingredientes ($10 c/u)', choices=[
+        ('Jamon', 'Jamón'),
+        ('Pina', 'Piña'),
+        ('Champiñones', 'Champiñones')
     ])
+
+    num_pizzas = IntegerField("Número de Pizzas", [
+        validators.DataRequired(message="Ingrese al menos una pizza"),
+        validators.NumberRange(min=1, message="Mínimo debe ser 1")
+    ], default=1)
+
+# Formulario para las consultas de ventas (Día/Mes)
+class ConsultaVentasForm(FlaskForm):
+    # Para la consulta por día de la semana (Lunes, Martes...)
+    dia_semana = StringField("Día de la semana", [validators.Optional()])
     
-    descripcion = TextAreaField("Descripción del Curso", [
-        validators.DataRequired(message="Agregue una breve descripción")
-    ])
-    
-    # Campo para seleccionar al maestro que imparte el curso [cite: 10, 27]
-    maestro_id = SelectField("Maestro que imparte", coerce=int)
+    # Para la consulta por nombre de Mes
+    mes = StringField("Mes", [validators.Optional()])

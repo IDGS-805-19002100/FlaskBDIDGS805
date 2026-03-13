@@ -3,89 +3,63 @@ import datetime
 
 db = SQLAlchemy()
 
-class Alumnos(db.Model):
-    __tablename__ = 'alumnos'
+class Cliente(db.Model):
+    __tablename__ = 'clientes'
     
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50))
-    apellidos = db.Column(db.String(200)) 
-    email = db.Column(db.String(120))
-    telefono = db.Column(db.String(20))
-    created_date = db.Column(
-        db.DateTime,
-        default=datetime.datetime.now
-    )
+    id_cliente = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    direccion = db.Column(db.String(200), nullable=False)
+    telefono = db.Column(db.String(20), nullable=False)
     
-    # Relación muchos a muchos con Cursos
-    cursos = db.relationship(
-        'Curso',
-        secondary='inscripciones',
-        back_populates='alumnos'
-    )
+    # Relación uno a muchos con Pedidos
+    # Un cliente puede tener muchos pedidos
+    pedidos = db.relationship('Pedido', back_populates='cliente')
 
-class Maestros(db.Model):
-    __tablename__ = 'maestros'
+class Pizza(db.Model):
+    __tablename__ = 'pizzas'
     
-    matricula = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50))
-    apellidos = db.Column(db.String(50))
-    especialidad = db.Column(db.String(50))
-    email = db.Column(db.String(50))
+    id_pizza = db.Column(db.Integer, primary_key=True)
+    tamano = db.Column(db.String(20), nullable=False)
+    ingredientes = db.Column(db.String(200), nullable=False)
+    precio = db.Column(db.Numeric(8, 2), nullable=False)
     
-    # Relación uno a muchos con Cursos
-    cursos = db.relationship('Curso', back_populates='maestro')
+    # Relación con el detalle del pedido
+    detalles = db.relationship('DetallePedido', back_populates='pizza')
 
-class Curso(db.Model):
-    __tablename__ = 'cursos'
+class Pedido(db.Model):
+    __tablename__ = 'pedidos'
     
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(150), nullable=False)
-    descripcion = db.Column(db.Text)
-    
-    # Clave foránea que conecta con Maestros
-    maestro_id = db.Column(
-        db.Integer,
-        db.ForeignKey('maestros.matricula'),
+    id_pedido = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(
+        db.Integer, 
+        db.ForeignKey('clientes.id_cliente'), 
         nullable=False
     )
+    fecha = db.Column(db.Date, nullable=False)
+    total = db.Column(db.Numeric(10, 2), nullable=False)
     
     # Relaciones
-    maestro = db.relationship('Maestros', back_populates='cursos') 
-    alumnos = db.relationship(
-        'Alumnos',
-        secondary='inscripciones',
-        back_populates='cursos'
-    )
+    cliente = db.relationship('Cliente', back_populates='pedidos')
+    detalles = db.relationship('DetallePedido', back_populates='pedido', cascade="all, delete-orphan")
 
-class Inscripcion(db.Model):
-    __tablename__ = 'inscripciones'
+class DetallePedido(db.Model):
+    __tablename__ = 'detalle_pedido'
     
-    id = db.Column(db.Integer, primary_key=True)
-    
-    alumno_id = db.Column(
-        db.Integer,
-        db.ForeignKey('alumnos.id'),
+    id_detalle = db.Column(db.Integer, primary_key=True)
+    id_pedido = db.Column(
+        db.Integer, 
+        db.ForeignKey('pedidos.id_pedido'), 
         nullable=False
     )
-    curso_id = db.Column(
-        db.Integer,
-        db.ForeignKey('cursos.id'),
+    id_pizza = db.Column(
+        db.Integer, 
+        db.ForeignKey('pizzas.id_pizza'), 
         nullable=False
     )
+    cantidad = db.Column(db.Integer, nullable=False)
+    subtotal = db.Column(db.Numeric(10, 2), nullable=False)
     
-    fecha_inscripcion = db.Column(
-        db.DateTime,
-        server_default=db.func.now()
-    )
-
-    # --- CORRECCIÓN AQUÍ ---
-    # Estas relaciones permiten que Jinja acceda a registro.alumno.nombre 
-    # y registro.curso.nombre desde la lista de inscripciones
-    alumno = db.relationship('Alumnos', backref='inscripciones_detalles')
-    curso = db.relationship('Curso', backref='inscripciones_detalles')
-    # -----------------------
-
-    # Restricción de unicidad para evitar que un alumno se inscriba dos veces al mismo curso
-    __table_args__ = (
-        db.UniqueConstraint('alumno_id', 'curso_id', name='uq_alumno_curso'),
-    )
+    # Relaciones para acceder fácilmente a los datos en los reportes
+    # Esto permite hacer: detalle.pizza.tamano o detalle.pedido.fecha
+    pedido = db.relationship('Pedido', back_populates='detalles')
+    pizza = db.relationship('Pizza', back_populates='detalles')

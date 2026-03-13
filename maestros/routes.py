@@ -1,9 +1,9 @@
 from flask import render_template, request, redirect, url_for
-from . import maestros  # <--- DEBE SER ASÍ, NO 'from . import alumnos'
+from . import maestros  
 import forms
 from models import db, Maestros
 
-# ... El resto del código de maestros que ya tienes ...
+
 
 @maestros.route("/maestros", methods=['GET', 'POST'])
 def registro_maestro():
